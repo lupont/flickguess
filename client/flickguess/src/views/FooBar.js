@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import SpotifyPlayer from 'react-spotify-web-playback';
+
 class FooBar extends Component {
     state = {
         foo: 'Bar',
@@ -24,6 +26,10 @@ class FooBar extends Component {
 
         return (
             <div>
+
+                <SpotifyPlayer
+                    token='BQBSE6SDI4kDCBukaETP5vCwsXho21f3EgC0mGQ7xXJp9cIQ4Td-6NKo-S5ziVYl7JEb0iaklDnPrzEhbs0l720csEn5ktjx9BB40RycQm_0wvC-0H_a4yyOylWzYquHNCunzIaxvS7rKPOCLAJIrzYXdwjCYAZWYlI'
+                    uris={['spotify:track:1n8NKQRg8LVHy7oUhUgbFF']}/>
                 <h1>
                     Rubrik
                 </h1>
