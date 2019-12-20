@@ -20,7 +20,7 @@ class FooBar extends Component {
     }
 
     render() {
-        // Note: the .bind(this) statement on line 31 is
+        // Note: the .bind(this) statement on line 37 is
         // necessary to make sure the method has access to
         // the correct 'this' instance.
 
