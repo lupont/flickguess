@@ -5,7 +5,7 @@ class MovieComponent extends Component {
     render() {
         const { movie } = this.props;
 
-        if (!movie) {
+        if (!movie || !movie.Response) {
             return (
                 <div>
                     <p>
@@ -15,10 +15,20 @@ class MovieComponent extends Component {
             );
         }
 
+        if (!movie.Response) {
+            return (
+                <div>
+                    <p>
+                        Movie not found.
+                    </p>
+                </div>
+            );
+        }
+
         return (
             <div>
                 <div>
-                    <h2>{movie.Title}</h2>
+                    <h2>{movie.Title} ({movie.Year})</h2>
                     
                     <p>
                         Directed by <span>{movie.Director}</span>
@@ -27,8 +37,12 @@ class MovieComponent extends Component {
                     <p>
                         Starring <span>{movie.Actors}</span>
                     </p>
+
+                    <p>
+                        {movie.Plot}
+                    </p>
                     
-                    <img src={movie.Poster} alt={'Poster for ' + movie.Title}/>
+                    <img src={movie.Poster} alt={`Poster for ${movie.Title}`}/>
                 </div>
             </div>
         );
