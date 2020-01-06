@@ -4,6 +4,9 @@ import { getMovie } from './util/http';
 import MovieComponent from './components/MovieComponent/MovieComponent';
 import Spotify from './components/Spotify'
 import './App.css';
+import BazQuz from './components/pages/FooBar';
+import FilmQuiz from './components/FilmQuiz';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const client_id = "93bbd9bdac0741f2b2a873c624a12aec";
 const response_type = "token";
@@ -18,7 +21,7 @@ class App extends Component {
         access_token: null,
     };
 
-    componentDidMount () {
+    componentDidMount() {
         const parsedHash = queryString.parse(window.location.hash);
         if (parsedHash.access_token) {
             this.setState({ access_token: parsedHash.access_token })
@@ -43,23 +46,32 @@ class App extends Component {
         const { movie, access_token } = this.state;
 
         return (
-            <div id="main-container">
-                <div id="container">
-                    <div>
-                        {this.state.access_token ? <Spotify access_token={access_token}/> : <button onClick={this.logInSpotifyHandler}>Logga in på Spotify</button>}
-                        <label htmlFor="movie-title-input">
-                            Enter a movie title
-                        </label>
-
-                        <input name="movie-title-input"
-                            onInput={event => this.updateMovie(event.target.value)} />
-                    </div>
-
-                    <MovieComponent movie={movie} />
-                </div>
+            <div className="App">
+                <FilmQuiz />
             </div>
+            // <div id="main-container">
+            //     <div id="container">
+            //         <div>
+            //             {this.state.access_token ? <Spotify access_token={access_token}/> : <button onClick={this.logInSpotifyHandler}>Logga in på Spotify</button>}
+            //             <label htmlFor="movie-title-input">
+            //                 Enter a movie title
+            //             </label>
+
+            //             <input name="movie-title-input"
+            //                 onInput={event => this.updateMovie(event.target.value)} />
+            //         </div>
+
+            //         <MovieComponent movie={movie} />
+            //     </div>
+            // </div>
         );
     }
 }
 
+
+
+
+
+
 export default App;
+
