@@ -2,35 +2,18 @@ import React, { Component } from 'react';
 import queryString from 'query-string';
 import { getMovie } from './util/http';
 import MovieComponent from './components/MovieComponent/MovieComponent';
-import Spotify from './components/Spotify'
 import './App.css';
 import BazQuz from './components/pages/FooBar';
 import FilmQuiz from './components/FilmQuiz';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import StartPage from './components/StartPage';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-const client_id = "93bbd9bdac0741f2b2a873c624a12aec";
-const response_type = "token";
-const redirect_uri = "http://localhost:3000";
-const scope = "streaming";
-const url = `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&response_type=${response_type}`;
 
 class App extends Component {
-
     state = {
         movie: null,
-        access_token: null,
     };
-
-    componentDidMount() {
-        const parsedHash = queryString.parse(window.location.hash);
-        if (parsedHash.access_token) {
-            this.setState({ access_token: parsedHash.access_token })
-        }
-    }
-
-    logInSpotifyHandler() {
-        window.open(url, "_self");
-    }
 
     async updateMovie(title) {
         this.setState({ movie: null });
@@ -43,16 +26,21 @@ class App extends Component {
     }
 
     render() {
-        const { movie, access_token } = this.state;
+        const { movie } = this.state;
 
         return (
-            <div className="App">
-                <FilmQuiz />
-            </div>
+            <Router>
+                <div className="App">
+                    <Switch>
+                        <Route path="/" exact component={StartPage} />
+                        <Route path="/quiz" component={FilmQuiz} />
+                    </Switch>
+                </div>
+            </Router>
             // <div id="main-container">
             //     <div id="container">
             //         <div>
-            //             {this.state.access_token ? <Spotify access_token={access_token}/> : <button onClick={this.logInSpotifyHandler}>Logga in på Spotify</button>}
+            //             
             //             <label htmlFor="movie-title-input">
             //                 Enter a movie title
             //             </label>
@@ -64,6 +52,7 @@ class App extends Component {
             //         <MovieComponent movie={movie} />
             //     </div>
             // </div>
+
         );
     }
 }
