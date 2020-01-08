@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { quizData } from "./quizData";
+import Spotify from "./Spotify";
 
-
-class FilmQuiz extends Component {
+class FilmQuiz extends Component { 
   state = {
     currentQuestion: 0,
     myAnswer: null,
@@ -25,11 +25,8 @@ class FilmQuiz extends Component {
 
   componentDidMount() {
     this.loadQuizData();
-
-    
-
-
   }
+
   nextQuestionHandler = () => {
     // console.log('test')
     const { myAnswer, answer, score } = this.state;
@@ -71,7 +68,7 @@ class FilmQuiz extends Component {
   };
   render() {
     const { options, myAnswer, currentQuestion, isEnd } = this.state;
-
+    
     if (isEnd) {
       return (
         <div className="result">
@@ -91,6 +88,7 @@ class FilmQuiz extends Component {
     } else {
       return (
         <div className="App">
+          <Spotify access_token = { this.props.location.state.access_token }/>
           <h1>{this.state.questions} </h1>
           <span>{`Questions ${currentQuestion}  out of ${quizData.length -
             1} remaining `}</span>
