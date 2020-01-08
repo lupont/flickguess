@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Spotify from './Spotify'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import queryString from 'query-string';
 
@@ -17,6 +16,7 @@ class StartPage extends Component {
     componentDidMount () {
         const access_token = localStorage.getItem('spotify_access_token')
         this.setState({access_token: access_token})
+        console.log(access_token)
     
         if (window.location.hash) {
           const parsedHash = queryString.parse(window.location.hash);
@@ -38,7 +38,13 @@ class StartPage extends Component {
             <div>
                 <h1>Flickguess</h1>
                 {this.state.access_token ? <p>Välkommen!</p> : <p>För att spela detta spelet måste du ha Spotify Premium</p>}
-                {this.state.access_token ? <Link to="/quiz" access_token= {this.state.access_token}><button class="glow-on-hover">Spela</button></Link> : <button class="glow-on-hover" type="button" onClick={this.logInSpotifyHandler}>Logga in på Spotify</button>}
+                {this.state.access_token ? <Link to={{
+                    pathname: '/quiz',
+                    state: {
+                        access_token: this.state.access_token
+                    }
+                }}><button class="glow-on-hover">Spela</button></Link> : <button class="glow-on-hover" type="button" onClick={this.logInSpotifyHandler}>Logga in på Spotify</button>}
+
             </div>
         )
 

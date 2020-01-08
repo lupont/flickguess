@@ -6,6 +6,7 @@ class Spotify extends Component {
         super(props);
         const { access_token } = props;
         this.state = { access_token };
+        console.log(this.state);
     }
 
 
@@ -47,8 +48,9 @@ class Spotify extends Component {
     }
 
     render() {
-        const { spotifyPlayer } = this.state
+        const { spotifyPlayer } = this.state;
         if (spotifyPlayer) {
+            console.log(spotifyPlayer);
 
             spotifyPlayer.addListener('ready', ({ device_id }) => {
                 console.log('Ready with Device ID', device_id);
@@ -56,10 +58,14 @@ class Spotify extends Component {
             });
 
             spotifyPlayer.connect();
-            return <button onClick={this.playSpotifyHandler}>Spela låt</button>
         }
 
-        return <h1>Initializing Spotify...</h1>
+        return (
+            <div>
+                {this.state.device_id ? <button onClick={this.playSpotifyHandler}>Spela låt</button> : <h1>Initializing Spotify...</h1>}
+            </div>
+
+        )
     }
 
 
