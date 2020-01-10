@@ -2,15 +2,21 @@ import React, { Component } from 'react'
 
 
 class Spotify extends Component {
+    state = {
+        accessToken: '',
+        deviceId: '',
+        spotifyPlayer: null,
+    };
+
     constructor(props) {
         super(props);
-        const { access_token } = props;
-        this.state = { access_token };
-        console.log(this.state);
+        // this.setState({ accessToken: props.accessToken });
     }
 
 
     componentDidMount() {
+        console.log('???????????????????', this.props.accessToken);
+        this.setState({ accessToken: this.props.accessToken });
         const script = document.createElement("script");
 
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -22,27 +28,26 @@ class Spotify extends Component {
             const spotifyPlayer = new window.Spotify.Player({
                 name: 'Flickguess',
                 getOAuthToken: (cb) => {
-                    cb(this.state.access_token);
-                }
+                    cb(this.state.accessToken);
+                },
             });
 
-            this.setState({ spotifyPlayer: spotifyPlayer })
+            this.setState({ spotifyPlayer });
         }
     }
 
-    playSpotifyHandler = () => {
-        console.log(this)
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.device_id}`, {
+    playSpotifyHandler() {
+        console.log('|||||||||||||||||||||||', this.state.deviceId);
+        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceId}`, {
             method: "PUT",
             body: JSON.stringify({
-                // in the URIS array put songs we want to play
                 uris: [
                     "spotify:track:3bidbhpOYeV4knp8AIu8Xn"
                 ]
             }),
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${this.state.access_token}`
+                Authorization: `Bearer ${this.state.accessToken}`
             }
         });
     }
@@ -54,7 +59,7 @@ class Spotify extends Component {
 
             spotifyPlayer.addListener('ready', ({ device_id }) => {
                 console.log('Ready with Device ID', device_id);
-                this.setState({ device_id: device_id });
+                this.setState({ deviceId: device_id });
             });
 
             spotifyPlayer.connect();
@@ -62,7 +67,15 @@ class Spotify extends Component {
 
         return (
             <div>
-                {this.state.device_id ? <button onClick={this.playSpotifyHandler}>Spela låt</button> : <h1>Initializing Spotify...</h1>}
+                {this.state.deviceId ? 
+                    <button onClick={this.playSpotifyHandler.bind(this)}>
+                        Spela låt
+                    </button> 
+                : 
+                    <h1>
+                        Initializing Spotify...
+                    </h1>
+                }
             </div>
 
         )
