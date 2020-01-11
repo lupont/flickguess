@@ -44,12 +44,12 @@ class StartPage extends Component {
                     <Link to={{
                         pathname: '/quiz',
                         state: { accessToken }}}>
-                        <button class='glow-on-hover'>
+                        <button className='glow-on-hover'>
                             Spela
                         </button>
                     </Link> 
                 : 
-                    <button class='glow-on-hover' 
+                    <button className='glow-on-hover' 
                             type='button' 
                             onClick={this.logInSpotifyHandler}>
                         Logga in på Spotify
