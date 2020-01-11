@@ -4,10 +4,7 @@ import './FilmQuiz.css';
 import Timer from './Timer/TimerComponent';
 
 class Option extends Component {
-    state = {
-        selectClass: '',
-        id: ''
-    }
+
     constructor(props) {
         super(props);
     }
@@ -68,7 +65,6 @@ class Options extends Component {
             </div>
         );
     }
-
 }
 
 const quizData = [];
@@ -151,7 +147,10 @@ class FilmQuiz extends Component {
                     let options = [];
                     answer = {
                         'title' : responseJson[i][0]['movie title'],
-                        'spotify': responseJson[i][0]['spotify']
+                        'spotify': responseJson[i][0]['spotify'],
+                        'song': responseJson[i][0]['title'],
+                        'composer': responseJson[i][0]['composer'],
+                        'correct': false
                     };
                     for (let j = 0; j < responseJson[i].length; j++) {
                         options.push({
@@ -204,6 +203,7 @@ class FilmQuiz extends Component {
 
         if (myAnswer == answer.title) {
             this.setState({ score: score + 1 });
+            quizData[this.state.currentQuestion].answer.correct = true;
         }
     }
 
@@ -230,9 +230,10 @@ class FilmQuiz extends Component {
 
     render() {
         const { options, myAnswer, currentQuestion, isEnd } = this.state;
+        console.log(quizData);
         return isEnd ? (
             <div className="result">
-                <h3>Ditt slutresultat blev {this.state.score} poäng </h3>
+                <h3>Ditt slutresultat blev {this.state.score} av {quizData.length} poäng </h3>
 
                 <p>
                     Rätt svar på frågorna var
@@ -240,8 +241,8 @@ class FilmQuiz extends Component {
 
                 <ul>
                 {quizData.map((item, index) => (
-                    <li className="ui floating message options" key={index}>
-                        {item.answer.title}
+                    <li className={item.answer.correct ? 'correct' : 'wrong'} key={index}>
+                        {item.answer.title} ({item.answer.song} by {item.answer.composer})
                     </li>
                 ))}
                 </ul>
@@ -250,15 +251,19 @@ class FilmQuiz extends Component {
             <div className="App">
                 <Spotify 
                     accessToken={this.props.location.state.accessToken}
-                    spotifyId={this.state.spotifyId}/>
+                    spotifyId={this.state.spotifyId}
+                />
+                {/*Removed temporarily*/}
                 {/*<Timer time={5}
-                       onFinish={this.onTimerFinish.bind(this)}
-        onChange={this.onTimerChange.bind(this)}/>*/}
+                        onFinish={this.onTimerFinish.bind(this)}
+                        onChange={this.onTimerChange.bind(this)}
+                    />*/}
 
                 <h1>{'Vilken film är detta?'} </h1>
 
                 <span key={'questionOrder'}>{`Fråga ${currentQuestion+1} av ${quizData.length}`}</span>
 
+                {/*Not used any more, could be removed*/}
                 {/*{options.map(option => (
                     <p key={option['movie title']}
                         className={`ui floating message options ${myAnswer === option['movie title'] ? "selected" : null}`}

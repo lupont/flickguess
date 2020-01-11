@@ -38,3 +38,11 @@
     border: 4px solid #4dcc7d;
     box-shadow: 0 0 10px #31b43a;
 }
+
+.correct {
+    border: 2px solid green;
+}
+
+.wrong {
+    border: 2px solid red;
+}
