@@ -5,6 +5,7 @@ class Spotify extends Component {
     state = {
         accessToken: '',
         deviceId: '',
+        spotifyId: '',
         spotifyPlayer: null,
     };
 
@@ -13,9 +14,7 @@ class Spotify extends Component {
         // this.setState({ accessToken: props.accessToken });
     }
 
-
     componentDidMount() {
-        console.log('???????????????????', this.props.accessToken);
         this.setState({ accessToken: this.props.accessToken });
         const script = document.createElement("script");
 
@@ -37,12 +36,15 @@ class Spotify extends Component {
     }
 
     playSpotifyHandler() {
-        console.log('|||||||||||||||||||||||', this.state.deviceId);
+        this.setState ({
+            spotifyId : this.props.spotifyId
+        })
+        //console.log('|||||||||||||||||||||||', this.state.deviceId);
         fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceId}`, {
             method: "PUT",
             body: JSON.stringify({
                 uris: [
-                    "spotify:track:3bidbhpOYeV4knp8AIu8Xn"
+                    "spotify:track:" + this.state.spotifyId
                 ]
             }),
             headers: {
@@ -55,10 +57,8 @@ class Spotify extends Component {
     render() {
         const { spotifyPlayer } = this.state;
         if (spotifyPlayer) {
-            console.log(spotifyPlayer);
 
             spotifyPlayer.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
                 this.setState({ deviceId: device_id });
             });
 
