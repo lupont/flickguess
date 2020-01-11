@@ -3,6 +3,9 @@ import Spotify from "./Spotify";
 import './FilmQuiz.css';
 import Timer from './Timer/TimerComponent';
 
+const nbrOfQuestions = 10;
+const nbrOfOptions = 4;
+
 class Option extends Component {
 
     constructor(props) {
@@ -17,7 +20,6 @@ class Option extends Component {
 
     select() {
         let elems = document.getElementsByClassName('option');
-        console.log(elems);
         for (let i = 0; i < elems.length; i++) {
             elems[i].classList.remove('gray-border');
         }
@@ -137,9 +139,7 @@ class FilmQuiz extends Component {
     }
 
     fetchQuizData() {
-        const q = 5;
-        const o = 4;
-        fetch(`http://localhost:5000/api/v1/themes/random?questions=${q}&options=${o}`)
+        fetch(`http://localhost:5000/api/v1/themes/random?questions=${nbrOfQuestions}&options=${nbrOfOptions}`)
             .then(response => response.json())
             .then((responseJson) => {
                 let answer = "";
@@ -230,7 +230,6 @@ class FilmQuiz extends Component {
 
     render() {
         const { options, myAnswer, currentQuestion, isEnd } = this.state;
-        console.log(quizData);
         return isEnd ? (
             <div className="result">
                 <h3>Ditt slutresultat blev {this.state.score} av {quizData.length} poäng </h3>
