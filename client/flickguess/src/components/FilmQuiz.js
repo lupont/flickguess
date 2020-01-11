@@ -1,23 +1,16 @@
 import React, { Component } from 'react';
 import Spotify from "./Spotify";
 import './FilmQuiz.css';
-import Timer from './Timer/TimerComponent';
+//import Timer from './Timer/TimerComponent';
 
-const nbrOfQuestions = 10;
-const nbrOfOptions = 4;
+const nbrOfQuestions = 2; //How many questions the game has
+const nbrOfOptions = 4; //How many options each question has
+const quizData = []; //Containing the answers and options for the questions
+const imageData = []; //Linking image urls to image ids
 
 class Option extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        this.setState ({
-            id: this.props.poster
-        });
-    }
-
+    //Deselecting all other options and selecting this
     select() {
         let elems = document.getElementsByClassName('option');
         for (let i = 0; i < elems.length; i++) {
@@ -29,35 +22,36 @@ class Option extends Component {
     }
 
     render() {
-            let source;
-    for (let i = 0; i < imageData.length; i++) {
-        if (imageData[i].id == this.props.poster) {
-            source = imageData[i].poster;
+        
+        //Find poster url in imageData
+        let source;
+        for (let i = 0; i < imageData.length; i++) {
+            if (imageData[i].id === this.props.poster) {
+                source = imageData[i].poster;
+                break;
+            }
         }
-    }
-   return(
-   <div id={this.props.poster} className={this.props.className} onClick={() => this.select()}>
-       <img src={source} alt='movie poster' className='optionImage'/>
-       <p className='optionText'>{this.props.title}</p>
-    </div>
-   );
+        return(
+            <div
+                id={this.props.poster}
+                 className={this.props.className}
+                 onClick={() => this.select()}
+            >
+                <img src={source} alt='movie poster' className='optionImage'/>
+                <p className='optionText'>{this.props.title}</p>
+            </div>
+        );
     }
 }
 
 class Options extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
-        let counter = 0;
         return (
             <div className='options'>
-            {this.props.options.map(option => (
+            {this.props.options.map((option, index) => (
                 <Option
-                    id={option['poster-id']}
-                    key={option['poster-id']}
+                    key={index}
                     title={option['movie title']}
                     poster={option['poster-id']}
                     className='option'
@@ -69,11 +63,8 @@ class Options extends Component {
     }
 }
 
-const quizData = [];
-const imageData = [];
-const addToQuizData = (options, answer, poster) => {
+const addToQuizData = (options, answer) => {
     quizData.push({
-        id : quizData.length,
         options: options,
         answer: answer,
     });
@@ -92,147 +83,125 @@ function shuffle (array) {
     }
 }
 
-class FilmQuiz extends Component {
+class Game extends Component {
     state = {
         currentQuestion: 0,
-        myAnswer: null,
-        options: [],
-        score: 0,
         disabled: true,
-        isEnd: false,
-        quizData: [],
-        spotifyId: ""
+        myAnswer: null,
+        score: 0,
+        options: [],
+        answer: '',
     };
 
-    loadQuizData() {
-        this.setState({
-            questions: quizData[this.state.currentQuestion].question,
-            answer: quizData[this.state.currentQuestion].answer,
-            options: quizData[this.state.currentQuestion].options,
-        })
+    constructor(props) {
+        super(props);
+        this.child = React.createRef(); // To run spotifys play method
     }
 
-    fetchMoviePosters() {
-        const apiKey = '7aa96104';
-        let id;
-        let counter = 0;
-        for (let i = 0; i < quizData.length; i++) {
-            for (let j = 0; j < quizData[i].options.length; j++) {
-                id = quizData[i].options[j].imdb;
-                fetch(`http://www.omdbapi.com/?i=${id}&apikey=${apiKey}`)
-                    .then(response => response.json())
-                    .then((responseJson) => {
-                        quizData[i].options[j]['poster-id'] = counter;
-                        imageData.push({
-                            'id' : counter,
-                            'poster' : responseJson.Poster})
-                        counter++;
-                    })
-                    .then(()=> {
-                        this.loadQuizData();}
-                        )
-                    .catch((error) => {
-                        console.error(error);
-                    });
-                }
-            }
-    }
-
-    fetchQuizData() {
-        fetch(`http://localhost:5000/api/v1/themes/random?questions=${nbrOfQuestions}&options=${nbrOfOptions}`)
-            .then(response => response.json())
-            .then((responseJson) => {
-                let answer = "";
-                for (let i = 0; i < responseJson.length; i++) {
-                    let options = [];
-                    answer = {
-                        'title' : responseJson[i][0]['movie title'],
-                        'spotify': responseJson[i][0]['spotify'],
-                        'song': responseJson[i][0]['title'],
-                        'composer': responseJson[i][0]['composer'],
-                        'correct': false
-                    };
-                    for (let j = 0; j < responseJson[i].length; j++) {
-                        options.push({
-                            'movie title' : responseJson[i][j]['movie title'],
-                            'imdb': responseJson[i][j]['imdb'],
-                        })
-                    }
-                    shuffle(options);
-                    addToQuizData(options, answer);
-                };
-                this.setState ({
-                    spotifyId: quizData[0].answer.spotify
-                })
-                this.fetchMoviePosters();
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    // Used to start playing as soon as spotify player are ready
+    spotifyReady() {
+        this.child.current.playSpotifyHandler(quizData[0].answer.spotify);
     }
 
     componentDidMount() {
-        this.fetchQuizData();
+        let index = this.state.currentQuestion;
+        this.setState({
+            answer: quizData[index].answer
+        })
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.currentQuestion !== prevState.currentQuestion) {
+        let index = this.state.currentQuestion
+        if (index !== prevState.currentQuestion) {
             this.setState({
                 disabled: true,
-                questions: quizData[this.state.currentQuestion].question,
-                options: quizData[this.state.currentQuestion].options,
-                answer: quizData[this.state.currentQuestion].answer,
+                options: quizData[index].options,
+                answer: quizData[index].answer,
             });
         }
     }
 
     nextQuestionHandler() {
-        const { answer } = this.state;
-
         this.updateScore();
+
+        let elems = document.getElementsByClassName('option');
+        for (let i = 0; i < elems.length; i++) {
+            elems[i].classList.remove('gray-border');
+        }
 
         let index = this.state.currentQuestion + 1;
         this.setState({
-            currentQuestion: index, 
-            spotifyId: quizData[index].answer.spotify
+            currentQuestion: index
         });
+        this.child.current.playSpotifyHandler(quizData[index].answer.spotify);
     };
 
     updateScore() {
         const { myAnswer, answer, score } = this.state;
 
-        if (myAnswer == answer.title) {
+        if (myAnswer === answer.title) {
             this.setState({ score: score + 1 });
             quizData[this.state.currentQuestion].answer.correct = true;
+            if (this.state.currentQuestion === quizData.length - 1) {
+                this.props.end(score + 1);
+                this.child.current.stopPlaying();
+            }
         }
     }
 
-    checkAnswer(answer) {
+    selectAnswer(answer) {
         this.setState({
             myAnswer: answer,
             disabled: false,
         });
     };
 
-    finishHandler() {
-        if (this.state.currentQuestion === quizData.length - 1) {
-            this.updateScore();
-            this.setState({ isEnd: true });
-        }
-    };
-
-    onTimerChange(time) {
-    }
-
-    onTimerFinish() {
-        console.log('finished');
-    }
-
     render() {
-        const { options, myAnswer, currentQuestion, isEnd } = this.state;
-        return isEnd ? (
+        return (
+            <div className="App">
+                <Spotify
+                    spotifyReady={() => this.spotifyReady()}
+                    ref={this.child}
+                    accessToken={this.props.location.state.accessToken}
+                    spotifyId={this.state.spotifyId}
+                />
+                {/*Removed temporarily*/}
+                {/*<Timer time={5}
+                        onFinish={this.onTimerFinish.bind(this)}
+                        onChange={this.onTimerChange.bind(this)}
+                    />*/}
+
+                <h1>{'Vilken film är detta?'} </h1>
+
+                <span key={'questionOrder'}>{`Fråga ${this.state.currentQuestion+1} av ${quizData.length}`}</span>
+
+                <Options options={quizData[this.state.currentQuestion].options} onClick={(title) => this.selectAnswer(title)}/>
+
+                {this.state.currentQuestion < quizData.length - 1 && (
+                    <button className="ui inverted button"
+                            disabled={this.state.disabled}
+                            onClick={this.nextQuestionHandler.bind(this)}>
+                        Nästa
+                    </button>
+                )}
+
+                {this.state.currentQuestion === quizData.length - 1 && (
+                    <button className="ui inverted button"
+                            disabled={this.state.disabled}
+                            onClick={() => this.updateScore()}>
+                        Avsluta
+                    </button>
+                )}
+            </div>
+        );
+    }
+}
+
+class Result extends Component {
+    render() {
+        return (
             <div className="result">
-                <h3>Ditt slutresultat blev {this.state.score} av {quizData.length} poäng </h3>
+                <h3>Ditt slutresultat blev {this.props.score} av {quizData.length} poäng </h3>
 
                 <p>
                     Rätt svar på frågorna var
@@ -246,49 +215,105 @@ class FilmQuiz extends Component {
                 ))}
                 </ul>
             </div>
-        ) : (
-            <div className="App">
-                <Spotify 
-                    accessToken={this.props.location.state.accessToken}
-                    spotifyId={this.state.spotifyId}
-                />
-                {/*Removed temporarily*/}
-                {/*<Timer time={5}
-                        onFinish={this.onTimerFinish.bind(this)}
-                        onChange={this.onTimerChange.bind(this)}
-                    />*/}
-
-                <h1>{'Vilken film är detta?'} </h1>
-
-                <span key={'questionOrder'}>{`Fråga ${currentQuestion+1} av ${quizData.length}`}</span>
-
-                {/*Not used any more, could be removed*/}
-                {/*{options.map(option => (
-                    <p key={option['movie title']}
-                        className={`ui floating message options ${myAnswer === option['movie title'] ? "selected" : null}`}
-                        onClick={() => this.checkAnswer(option['movie title'])}>
-                        {option['movie title']}
-                    </p>
-                ))}*/}
-
-                <Options options={options} onClick={(title) => this.checkAnswer(title)}/>
-
-                {currentQuestion < quizData.length - 1 && (
-                    <button className="ui inverted button"
-                            disabled={this.state.disabled}
-                            onClick={this.nextQuestionHandler.bind(this)}>
-                        Nästa
-                    </button>
-                )}
-
-                {currentQuestion === quizData.length - 1 && (
-                    <button className="ui inverted button"
-                            onClick={this.finishHandler.bind(this)}>
-                        Avsluta
-                    </button>
-                )}
-            </div>
         );
+    }
+}
+
+class FilmQuiz extends Component {
+    state = {
+        isEnd: false,
+        load: false,
+        score: 0
+    };
+
+    componentDidMount() {
+        this.fetchQuizData();
+    }
+
+    fetchMoviePosters() {
+        const apiKey = '7aa96104';
+        let id;
+        for (let i = 0; i < quizData.length; i++) {
+            for (let j = 0; j < quizData[i].options.length; j++) {
+                id = quizData[i].options[j].imdb;
+                fetch(`http://www.omdbapi.com/?i=${id}&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then((responseJson) => {
+                    let counter = i * quizData[i].options.length + j;
+                    quizData[i].options[j]['poster-id'] = counter;
+                    imageData.push({
+                        'id' : counter,
+                        'poster' : responseJson.Poster
+                    })
+                    this.setState({
+                        load: true
+                    })
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            }
+        }
+    }
+
+    fetchQuizData() {
+        fetch(`http://localhost:5000/api/v1/themes/random?questions=${nbrOfQuestions}&options=${nbrOfOptions}`)
+        .then(response => response.json())
+        .then((responseJson) => {
+            let answer = "";
+            for (let i = 0; i < responseJson.length; i++) {
+                let options = [];
+                answer = {
+                    'title' : responseJson[i][0]['movie title'],
+                    'spotify': responseJson[i][0]['spotify'],
+                    'song': responseJson[i][0]['title'],
+                    'composer': responseJson[i][0]['composer'],
+                    'correct': false
+                };
+                for (let j = 0; j < responseJson[i].length; j++) {
+                    options.push({
+                        'movie title' : responseJson[i][j]['movie title'],
+                        'imdb': responseJson[i][j]['imdb'],
+                    })
+                }
+                shuffle(options);
+                addToQuizData(options, answer);
+            };
+            this.setState ({
+                spotifyId: quizData[0].answer.spotify
+            })
+            this.fetchMoviePosters();
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    onTimerChange(time) {
+    }
+
+    onTimerFinish() {
+        console.log('finished');
+    }
+
+    end(theScore) {
+        this.setState({
+            score: theScore,
+            isEnd: true
+        })
+    }
+
+    render() {
+        return this.state.load ? (this.state.isEnd ? 
+            <Result 
+                score={this.state.score}
+            />
+        : 
+            <Game 
+                location={this.props.location}
+                end={(score) => this.end(score)}
+            />
+        ) : <div></div>
     }
 }
 export default FilmQuiz;

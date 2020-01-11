@@ -5,7 +5,7 @@ import queryString from 'query-string';
 const client_id = '93bbd9bdac0741f2b2a873c624a12aec';
 const response_type = 'token';
 const redirect_uri = 'http://localhost:3000/';
-const scope = 'streaming';
+const scope = ['streaming', "user-read-email", "user-read-private"];
 const url = `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&response_type=${response_type}`;
 
 class StartPage extends Component {
