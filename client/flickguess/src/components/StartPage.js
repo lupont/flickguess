@@ -40,14 +40,30 @@ class StartPage extends Component {
                     <p>För att spela detta spelet måste du ha Spotify Premium</p>
                 }
                 
-                {accessToken ? 
+                {accessToken ? (
+                    <div>
                     <Link to={{
                         pathname: '/quiz',
-                        state: { accessToken }}}>
+                        state: { accessToken, questions:5, options: 4 }}}>
                         <button className='glow-on-hover'>
-                            Spela
+                            Enkel
+                        </button>
+                    </Link>
+                    <Link to={{
+                        pathname: '/quiz',
+                        state: { accessToken, questions:10, options: 4 }}}>
+                        <button className='glow-on-hover'>
+                            Medel
+                        </button>
+                    </Link>
+                    <Link to={{
+                        pathname: '/quiz',
+                        state: { accessToken, questions:20, options: 8 }}}>
+                        <button className='glow-on-hover'>
+                            Svår
                         </button>
                     </Link> 
+                </div>)
                 : 
                     <button className='glow-on-hover' 
                             type='button' 

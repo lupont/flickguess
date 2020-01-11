@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Spotify from "./Spotify";
 import './FilmQuiz.css';
 //import Timer from './Timer/TimerComponent';
 
-const nbrOfQuestions = 2; //How many questions the game has
-const nbrOfOptions = 4; //How many options each question has
+let nbrOfQuestions = 3; //How many questions the game has
+let nbrOfOptions = 4; //How many options each question has
 const quizData = []; //Containing the answers and options for the questions
 const imageData = []; //Linking image urls to image ids
 
@@ -146,6 +147,11 @@ class Game extends Component {
                 this.props.end(score + 1);
                 this.child.current.stopPlaying();
             }
+        } else {
+            if (this.state.currentQuestion === quizData.length - 1) {
+                this.props.end(score);
+                this.child.current.stopPlaying();
+            }
         }
     }
 
@@ -214,6 +220,15 @@ class Result extends Component {
                     </li>
                 ))}
                 </ul>
+                <Link to={{
+                        pathname: '/',
+                        //state: { accessToken }
+                    }}
+                        >
+                        <button className='glow-on-hover'>
+                            Spela igen?
+                        </button>
+                </Link> 
             </div>
         );
     }
@@ -225,6 +240,12 @@ class FilmQuiz extends Component {
         load: false,
         score: 0
     };
+
+    constructor(props) {
+        super(props);
+        nbrOfQuestions = this.props.location.state.questions;
+        nbrOfOptions = this.props.location.state.options;
+    }
 
     componentDidMount() {
         this.fetchQuizData();
