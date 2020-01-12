@@ -9,6 +9,11 @@ let nbrOfOptions = 4; //How many options each question has
 const quizData = []; //Containing the answers and options for the questions
 const imageData = []; //Linking image urls to image ids
 
+/**
+ * Adds the provided options and answer to the array of quiz data.
+ * @param {*} options The options for the question.
+ * @param {*} answer The answer to the question.
+ */
 const addToQuizData = (options, answer) => {
     quizData.push({
         options: options,
@@ -16,19 +21,20 @@ const addToQuizData = (options, answer) => {
     });
 }
 
+/**
+ * Shuffles an array to a randomized state.
+ * @param {*} array The array to shuffle.
+ */
 function shuffle (array) {
-    var i = 0
-      , j = 0
-      , temp = null
-
-    for (i = array.length - 1; i > 0; i -= 1) {
-      j = Math.floor(Math.random() * (i + 1))
-      temp = array[i]
-      array[i] = array[j]
-      array[j] = temp
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
+/**
+ * A component that initialises the quiz and displays the game or result depending on the state.
+ */
 class FilmQuizComponent extends Component {
     state = {
         isEnd: false,
@@ -42,12 +48,16 @@ class FilmQuizComponent extends Component {
         nbrOfOptions = this.props.location.state.options;
     }
 
+    /**
+     * Fetches the quiz data.
+     */
     async componentDidMount() {
-        console.log('quiz loaded');
         await this.fetchQuizData();
-        console.log('data fetched');
     }
 
+    /**
+     * Gets the movie posters from the OMDb API.
+     */
     async fetchMoviePosters() {
         const apiKey = '7aa96104';
 
@@ -66,6 +76,9 @@ class FilmQuizComponent extends Component {
         }
     }
 
+    /**
+     * Gets the quiz data from the custom API.
+     */
     async fetchQuizData() {
         const response = await fetch(`http://localhost:5000/api/v1/themes/random?questions=${nbrOfQuestions}&options=${nbrOfOptions}`);
         const json = await response.json();
@@ -94,13 +107,15 @@ class FilmQuizComponent extends Component {
             addToQuizData(options, answer);
         }
 
-        console.log(quizData);
-
         this.setState({ spotifyId: quizData[0].answer.spotify });
         await this.fetchMoviePosters();
         this.setState({ isLoading: false });
     }
 
+    /**
+     * Saves the score and ends the game.
+     * @param {*} score 
+     */
     end(score) {
         this.setState({
             score,

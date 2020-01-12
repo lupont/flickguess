@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * A component that shows the player's score as well as the answers.
+ */
 class ResultComponent extends Component {
     render() {
         const { quizData } = this.props;
-        
+
         return (
             <div className="result">
                 <h3>Ditt slutresultat blev {this.props.score} av {quizData.length} poäng </h3>

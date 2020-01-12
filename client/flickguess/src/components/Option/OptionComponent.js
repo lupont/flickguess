@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 
+/**
+ * A component that displays an option for a question - its name and poster.
+ */
 class OptionComponent extends Component {
-
-    //Deselecting all other options and selecting this
+    /**
+     * Adds custom CSS to the answered option.
+     */
     select() {
         let elems = document.getElementsByClassName('option');
         for (let i = 0; i < elems.length; i++) {

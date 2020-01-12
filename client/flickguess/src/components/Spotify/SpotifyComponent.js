@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 let deviceId;
 let spotifyPlayer;
 
+/**
+ * A component containing the Spotify player. Does not render anything.
+ */
 class SpotifyComponent extends Component {
 
     constructor(props) {
@@ -11,15 +14,13 @@ class SpotifyComponent extends Component {
     }
 
     shouldComponentUpdate(newProps, newState) {
-        // if (newProps.spotifyId !== this.props.spotifyId) {
-        //     return true;
-        // } 
-
-        // return false;
-
         return newProps.spotifyId !== this.props.spotifyId;
     }
 
+    /**
+     * Creates a script tag and inserts a spotify player script. Authenticates the player
+     * and retrieves the device id.
+     */
     componentDidMount() {
         this.setState({ accessToken: this.props.accessToken });
         const script = document.createElement('script');
@@ -45,12 +46,15 @@ class SpotifyComponent extends Component {
         };
     }
 
-    componentDidUpdate() {
+    componentWillUnmount() {
         this.stopPlaying();
     }
 
+    /**
+     * Performs a PUT request to Spotify's API to play the specified track.
+     * @param {*} spotifyId The Spotify Track ID of the song to play.
+     */
     playSpotifyHandler(spotifyId) {
-
         fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
             method: "PUT",
             body: JSON.stringify({
@@ -63,6 +67,9 @@ class SpotifyComponent extends Component {
         });
     }
 
+    /**
+     * Performs a PUT request to Spotify's API to stop (pause) the currently playing song.
+     */
     stopPlaying() {
         fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
             method: 'PUT',
@@ -71,13 +78,12 @@ class SpotifyComponent extends Component {
                 Authorization: `Bearer ${this.props.accessToken}`,
             },
         });
-        // spotifyPlayer.pause().then(() => {
-        //     console.log('Paused!');
-        //   });
     }
 
     //No graphical rendering, just plays in the background
-    render() { return ( <div className='spotifyPlayer'></div> ) }
+    render() { 
+        return false;
+    }
 }
 
 export default SpotifyComponent;

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Option from '../Option/OptionComponent';
 
+/**
+ * A component showing the different options for a question.
+ */
 class OptionsComponent extends Component {
-
     render() {
         const { missedAnswer, imageData } = this.props;
 

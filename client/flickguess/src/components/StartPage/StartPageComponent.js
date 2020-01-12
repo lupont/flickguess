@@ -8,6 +8,9 @@ const redirect_uri = 'http://localhost:3000/';
 const scope = ['streaming', "user-read-email", "user-read-private"];
 const url = `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&response_type=${response_type}`;
 
+/**
+ * A component that displays authentication prompt and allows user to choose difficulty.
+ */
 class StartPageComponent extends Component {
     state = {
         accessToken: '',
