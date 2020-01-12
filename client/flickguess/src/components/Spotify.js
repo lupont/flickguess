@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 
+let deviceId;
+let spotifyPlayer;
 
 class Spotify extends Component {
-    state = {
-        accessToken: '',
-        deviceId: '',
-        spotifyId: '',
-        spotifyPlayer: null,
-    };
 
+    constructor(props) {
+        super(props);
+        this.playSpotifyHandler.bind(this);
+    }
+
+    shouldComponentUpdate(newProps, newState) {
+        if (newProps.spotifyId !== this.props.spotifyId) {
+            return true;
+        } 
+
+        return false;
+    }
 
     componentDidMount() {
         this.setState({ accessToken: this.props.accessToken });
@@ -19,80 +27,44 @@ class Spotify extends Component {
 
         document.body.appendChild(script);
 
+        //create player
         window.onSpotifyWebPlaybackSDKReady = () => {
-            const spotifyPlayer = new window.Spotify.Player({
+            spotifyPlayer = new window.Spotify.Player({
                 name: 'Flickguess',
                 getOAuthToken: (cb) => {
-                    cb(this.state.accessToken);
+                    cb(this.props.accessToken);
                 },
             });
 
-            spotifyPlayer.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID!', device_id);
-                this.setState({ deviceId: device_id });
-            });
+            //Get device id, contacts parent when done
+            spotifyPlayer.addListener('ready', ({ device_id }) => { deviceId = device_id; this.props.spotifyReady() });
+            spotifyPlayer.connect();
 
-            this.setState({ spotifyPlayer });
         };
     }
 
-    onSpotifyReady() {
-        this.state.spotifyPlayer.connect();
-        this.playSpotifyHandler();
-    }
+    playSpotifyHandler(spotifyId) {
 
-    playSpotifyHandler() {
-        this.setState ({ spotifyId : this.props.spotifyId });
-
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceId}`, {
-            method: 'PUT',
+        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+            method: "PUT",
             body: JSON.stringify({
-                uris: [`spotify:track:${this.state.spotifyId}`],
+                uris: [ "spotify:track:" + spotifyId ]
             }),
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.state.accessToken}`,
-            },
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.props.accessToken}`
+            }
         });
     }
 
     stopPlaying() {
-        fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.state.accessToken}`,
-            },
-        });
+        spotifyPlayer.pause().then(() => {
+            console.log('Paused!');
+          });
     }
 
-    render() {
-        const { spotifyPlayer } = this.state;
-
-        if (spotifyPlayer) {
-            spotifyPlayer.addListener('ready', ({ device_id }) => {
-                this.setState({ deviceId: device_id });
-            });
-        }
-
-        // if (spotifyPlayer && this.props.playInstantly) {
-        //     this.onSpotifyReady();
-        // }
-
-        return (
-            <div>
-                {this.state.deviceId ? 
-                    <button onClick={this.playSpotifyHandler.bind(this)}>
-                        Spela låt
-                    </button> 
-                : 
-                    <h1>
-                        Initializing Spotify...
-                    </h1>
-                }
-            </div>
-        );
-    }
+    //No graphical rendering, just plays in the background
+    render() { return ( <div className='spotifyPlayer'></div> ) }
 }
 
 export default Spotify;
