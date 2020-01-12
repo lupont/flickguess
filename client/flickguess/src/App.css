@@ -111,6 +111,7 @@ ul {
   z-index: 0;
   border-radius: 10px;
   display: inline-block;
+  margin: 1%;
 }
 
 .glow-on-hover:before {

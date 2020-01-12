@@ -36,19 +36,50 @@
 	box-shadow: 0 0 10px #25292b;
 }
 
-.green-border {
-    border: 4px solid #4dcc7d;
-    box-shadow: 0 0 10px #31b43a;
-}
+
 
 .correct {
-    border: 2px solid green;
+    border: 1px solid #12ff3a; 
+    -webkit-border-radius: 7px;
+       -moz-border-radius: 7px;
+            border-radius: 7px;
+
+
+    /* make it glow! */
+    -webkit-box-shadow: 0px 0px 7px #12ff3a;
+       -moz-box-shadow: 0px 0px 7px #12ff3a;
+            box-shadow: 0px 0px 7px #12ff3a;
 }
 
 .wrong {
+<<<<<<< HEAD
     border: 2px solid red;
 }
 
 .ui inverted button {
     
+=======
+    border: 1px solid #ff2d2d; 
+    -webkit-border-radius: 7px;
+       -moz-border-radius: 7px;
+            border-radius: 7px;
+
+
+    /* make it glow! */
+    -webkit-box-shadow: 0px 0px 7px #ff2d2d;
+       -moz-box-shadow: 0px 0px 7px #ff2d2d;
+            box-shadow: 0px 0px 7px #ff2d2d;
+}
+
+
+#quizResultList {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+}
+
+#quizResultList > li {
+    margin: 2%;
+    padding: 1%;
+>>>>>>> 488b0c283343637aa92f50c69afadcfd3074de34
 }

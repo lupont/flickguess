@@ -213,7 +213,7 @@ class Result extends Component {
                     Rätt svar på frågorna var
                 </p>
 
-                <ul>
+                <ul id="quizResultList">
                 {quizData.map((item, index) => (
                     <li className={item.answer.correct ? 'correct' : 'wrong'} key={index}>
                         {item.answer.title} ({item.answer.song} by {item.answer.composer})
