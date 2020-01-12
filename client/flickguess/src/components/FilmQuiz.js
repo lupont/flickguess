@@ -184,7 +184,7 @@ class Game extends Component {
                 <Options options={quizData[this.state.currentQuestion].options} onClick={(title) => this.selectAnswer(title)}/>
 
                 {this.state.currentQuestion < quizData.length - 1 && (
-                    <button className="ui inverted button"
+                    <button className="glow-on-hover"
                             disabled={this.state.disabled}
                             onClick={this.nextQuestionHandler.bind(this)}>
                         Nästa
@@ -192,7 +192,7 @@ class Game extends Component {
                 )}
 
                 {this.state.currentQuestion === quizData.length - 1 && (
-                    <button className="ui inverted button"
+                    <button className="glow-on-hover"
                             disabled={this.state.disabled}
                             onClick={() => this.updateScore()}>
                         Avsluta

@@ -27,6 +27,8 @@
     max-width: 80%;
     max-height: auto;
     display: inline-block;
+
+    
 }
 
 .gray-border {
@@ -45,4 +47,8 @@
 
 .wrong {
     border: 2px solid red;
+}
+
+.ui inverted button {
+    
 }
