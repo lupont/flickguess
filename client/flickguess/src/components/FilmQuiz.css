@@ -52,13 +52,11 @@
 }
 
 .wrong {
-<<<<<<< HEAD
     border: 2px solid red;
 }
 
 .ui inverted button {
     
-=======
     border: 1px solid #ff2d2d; 
     -webkit-border-radius: 7px;
        -moz-border-radius: 7px;
@@ -81,5 +79,4 @@
 #quizResultList > li {
     margin: 2%;
     padding: 1%;
->>>>>>> 488b0c283343637aa92f50c69afadcfd3074de34
 }
