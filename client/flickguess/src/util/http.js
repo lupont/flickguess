@@ -1,6 +1,6 @@
 const MOVIE_API_BASE_URL = 'http://www.omdbapi.com/?apikey=d621c3d&t=';
-const MUSIC_API_BASE_URL = '';
-const THEME_SONG_API_BASE_URL = '';
+// const MUSIC_API_BASE_URL = '';
+// const THEME_SONG_API_BASE_URL = '';
 
 async function getJson(url) {
     const resource = await fetch(url);

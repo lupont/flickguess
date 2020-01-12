@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 
 class Spotify extends Component {
@@ -9,16 +9,12 @@ class Spotify extends Component {
         spotifyPlayer: null,
     };
 
-    constructor(props) {
-        super(props);
-        // this.setState({ accessToken: props.accessToken });
-    }
 
     componentDidMount() {
         this.setState({ accessToken: this.props.accessToken });
-        const script = document.createElement("script");
+        const script = document.createElement('script');
 
-        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.src = 'https://sdk.scdn.co/spotify-player.js';
         script.async = true;
 
         document.body.appendChild(script);
@@ -31,39 +27,57 @@ class Spotify extends Component {
                 },
             });
 
+            spotifyPlayer.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID!', device_id);
+                this.setState({ deviceId: device_id });
+            });
+
             this.setState({ spotifyPlayer });
-        }
+        };
+    }
+
+    onSpotifyReady() {
+        this.state.spotifyPlayer.connect();
+        this.playSpotifyHandler();
     }
 
     playSpotifyHandler() {
-        this.setState ({
-            spotifyId : this.props.spotifyId
-        })
-        //console.log('|||||||||||||||||||||||', this.state.deviceId);
+        this.setState ({ spotifyId : this.props.spotifyId });
+
         fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceId}`, {
-            method: "PUT",
+            method: 'PUT',
             body: JSON.stringify({
-                uris: [
-                    "spotify:track:" + this.state.spotifyId
-                ]
+                uris: [`spotify:track:${this.state.spotifyId}`],
             }),
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.state.accessToken}`
-            }
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.state.accessToken}`,
+            },
+        });
+    }
+
+    stopPlaying() {
+        fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.state.accessToken}`,
+            },
         });
     }
 
     render() {
         const { spotifyPlayer } = this.state;
-        if (spotifyPlayer) {
 
+        if (spotifyPlayer) {
             spotifyPlayer.addListener('ready', ({ device_id }) => {
                 this.setState({ deviceId: device_id });
             });
-
-            spotifyPlayer.connect();
         }
+
+        // if (spotifyPlayer && this.props.playInstantly) {
+        //     this.onSpotifyReady();
+        // }
 
         return (
             <div>
@@ -77,11 +91,8 @@ class Spotify extends Component {
                     </h1>
                 }
             </div>
-
-        )
+        );
     }
-
-
 }
 
 export default Spotify;
