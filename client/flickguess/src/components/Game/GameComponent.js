@@ -155,7 +155,7 @@ class GameComponent extends Component {
                         ref={ref => this.timer = ref}/>
 
                 {this.state.missedAnswer && (
-                    <button className="ui inverted button"
+                    <button className="ui inverted button glow-on-hover" 
                             onClick={this.nextQuestionHandler.bind(this)}>
                         {this.state.currentQuestion === quizData.length - 1 ? 'Avsluta' : 'Nästa'}
                     </button>

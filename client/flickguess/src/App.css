@@ -114,6 +114,7 @@ ul {
   margin: 1%;
 }
 
+
 .glow-on-hover:before {
   content: '';
   background: linear-gradient(45deg, #c300ff, #6f00ff, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #b12929);
