@@ -2,27 +2,26 @@ import React, { Component } from 'react';
 import Option from '../Option/OptionComponent';
 
 class OptionsComponent extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
+        const { missedAnswer, imageData } = this.props;
+
         return (
             <div className='options'>
-            {this.props.options.map(option => (
+            {this.props.options.map((option, index) => (
                 <Option
-                    id={option['poster-id']}
-                    key={option['poster-id']}
+                    key={index}
                     title={option['movie title']}
                     poster={option['poster-id']}
-                    className='option'
+                    className={`option ${missedAnswer ? 'disabled' : ''}`}
+                    missedAnswer={missedAnswer}
+                    imageData={imageData}
                     onClick={() => {this.props.onClick(option['movie title'])}}
                 />
             ))}
             </div>
         );
     }
-
 }
 
 export default OptionsComponent;

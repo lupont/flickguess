@@ -8,7 +8,7 @@ const redirect_uri = 'http://localhost:3000/';
 const scope = ['streaming', "user-read-email", "user-read-private"];
 const url = `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&response_type=${response_type}`;
 
-class StartPage extends Component {
+class StartPageComponent extends Component {
     state = {
         accessToken: '',
     };
@@ -44,21 +44,21 @@ class StartPage extends Component {
                     <div>
                     <Link to={{
                         pathname: '/quiz',
-                        state: { accessToken, questions:5, options: 4 }}}>
+                        state: { accessToken, questions:5, options: 4, time: 20 }}}>
                         <button className='glow-on-hover'>
                             Enkel
                         </button>
                     </Link>
                     <Link to={{
                         pathname: '/quiz',
-                        state: { accessToken, questions:10, options: 4 }}}>
+                        state: { accessToken, questions:10, options: 4, time: 15 }}}>
                         <button className='glow-on-hover'>
                             Medel
                         </button>
                     </Link>
                     <Link to={{
                         pathname: '/quiz',
-                        state: { accessToken, questions:20, options: 8 }}}>
+                        state: { accessToken, questions:20, options: 8, time: 10 }}}>
                         <button className='glow-on-hover'>
                             Svår
                         </button>
@@ -78,4 +78,4 @@ class StartPage extends Component {
 }
 
 
-export default StartPage;
+export default StartPageComponent;

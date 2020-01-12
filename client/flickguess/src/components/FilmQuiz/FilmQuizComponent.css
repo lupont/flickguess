@@ -8,6 +8,15 @@
     border: 0;
 }
 
+.disabled {
+    opacity: 0.5;
+    color: red;
+}
+
+.disabled:hover {
+    cursor: default !important;
+}
+
 .option {
     padding-top: 10px;
     padding-bottom: 15px;

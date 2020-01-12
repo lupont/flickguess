@@ -6,35 +6,40 @@ class TimerComponent extends Component {
     state = {
         timeLeft: -1,
         time: -1,
+        timerFinished: false,
     };
 
     componentDidMount() {
+        this.restart();
+        this.setState({ time: this.props.time * 10 });
+    }
+
+    restart() {
         const { time } = this.props;
+
+        clearInterval(this.interval);
+
         this.setState({
-            time: time * 10,
             timeLeft: time * 10,
+            timerFinished: false,
         });
 
         this.interval = setInterval(() => {
             const { timeLeft } = this.state;
+            this.props.onChange(timeLeft - 1);
 
             if (timeLeft <= 0) {
-                this.setState({ 
-                    timerFinished: true,
-                });
+                this.setState({ timerFinished: true });
                 clearInterval(this.interval);
                 this.props.onFinish();
             }
             else {
                 this.setState({ timeLeft: timeLeft - 1 });
-                this.props.onChange(timeLeft - 1);
             }
         }, 100);
     }
     
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
+    componentWillUnmount = () => clearInterval(this.interval);
 
     render() {
         const { timeLeft, time, timerFinished } = this.state;

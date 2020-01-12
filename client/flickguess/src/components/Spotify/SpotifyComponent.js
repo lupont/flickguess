@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 let deviceId;
 let spotifyPlayer;
 
-class Spotify extends Component {
+class SpotifyComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -11,11 +11,13 @@ class Spotify extends Component {
     }
 
     shouldComponentUpdate(newProps, newState) {
-        if (newProps.spotifyId !== this.props.spotifyId) {
-            return true;
-        } 
+        // if (newProps.spotifyId !== this.props.spotifyId) {
+        //     return true;
+        // } 
 
-        return false;
+        // return false;
+
+        return newProps.spotifyId !== this.props.spotifyId;
     }
 
     componentDidMount() {
@@ -43,6 +45,10 @@ class Spotify extends Component {
         };
     }
 
+    componentDidUpdate() {
+        this.stopPlaying();
+    }
+
     playSpotifyHandler(spotifyId) {
 
         fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
@@ -58,13 +64,20 @@ class Spotify extends Component {
     }
 
     stopPlaying() {
-        spotifyPlayer.pause().then(() => {
-            console.log('Paused!');
-          });
+        fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.props.accessToken}`,
+            },
+        });
+        // spotifyPlayer.pause().then(() => {
+        //     console.log('Paused!');
+        //   });
     }
 
     //No graphical rendering, just plays in the background
     render() { return ( <div className='spotifyPlayer'></div> ) }
 }
 
-export default Spotify;
+export default SpotifyComponent;
