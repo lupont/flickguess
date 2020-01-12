@@ -15,7 +15,7 @@ label {
 
 .App {
   text-align: center;
-  font-family: sans-serif;
+  font-family: 'Exo 2', sans-serif;
   color: #f1f2f6;
 }
 
@@ -111,6 +111,7 @@ ul {
   z-index: 0;
   border-radius: 10px;
   display: inline-block;
+  margin: 1%;
 }
 
 .glow-on-hover:before {
